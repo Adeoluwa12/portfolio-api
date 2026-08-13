@@ -4,6 +4,7 @@ import Project from "../models/Project.js";
 import Certification from "../models/Certification.js";
 import Skill from "../models/Skill.js";
 import Message from "../models/Message.js";
+import SiteSettings from "../models/SiteSettings.js";
 
 const router = Router();
 router.use(requireAdmin);
@@ -30,6 +31,16 @@ function crud(model, path) {
 crud(Project, "projects");
 crud(Certification, "certifications");
 crud(Skill, "skills");
+
+router.get("/settings", async (req, res) => {
+  res.json(await SiteSettings.getSettings());
+});
+router.put("/settings", async (req, res) => {
+  const settings = await SiteSettings.getSettings();
+  Object.assign(settings, req.body);
+  await settings.save();
+  res.json(settings);
+});
 
 // Inbox is read-only/moderation, not a full CRUD resource.
 router.get("/messages", async (req, res) => {

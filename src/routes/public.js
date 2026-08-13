@@ -4,9 +4,17 @@ import Project from "../models/Project.js";
 import Certification from "../models/Certification.js";
 import Skill from "../models/Skill.js";
 import Message from "../models/Message.js";
+import SiteSettings from "../models/SiteSettings.js";   // ← add
 import { sendContactNotification } from "../utils/mail.js";
 
 const router = Router();
+
+// ← add this whole block, right after `const router = Router();`
+router.get("/settings", async (req, res) => {
+  const settings = await SiteSettings.getSettings();
+  res.json(settings);
+});
+
 
 router.get("/projects", async (req, res) => {
   const projects = await Project.find().sort({ order: 1, loggedAt: -1 });
