@@ -6,8 +6,10 @@ import publicRoutes from "./routes/public.js";
 import authRoutes from "./routes/auth.js";
 import adminRoutes from "./routes/admin.js";
 import uploadRoutes from "./routes/upload.js";
+import { validateCloudinaryConfig } from "./config/cloudinary.js";
 
 const app = express();
+validateCloudinaryConfig();
 
 app.use(cors({ origin: process.env.CLIENT_ORIGIN, credentials: true }));
 app.use(express.json());

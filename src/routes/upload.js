@@ -10,7 +10,17 @@ const upload = multer({
   limits: { fileSize: 100 * 1024 * 1024 }, // 100MB — covers a short intro video
 });
 
-router.post("/", requireAdmin, upload.single("file"), async (req, res) => {
+function handleMulterUpload(req, res, next) {
+  upload.single("file")(req, res, (err) => {
+    if (!err) return next();
+    if (err.code === "LIMIT_FILE_SIZE") {
+      return res.status(413).json({ error: "File too large (max 100MB)" });
+    }
+    return res.status(400).json({ error: err.message || "Invalid file upload" });
+  });
+}
+
+router.post("/", requireAdmin, handleMulterUpload, async (req, res) => {
   if (!req.file) {
     return res.status(400).json({ error: "No file provided" });
   }
@@ -31,7 +41,16 @@ router.post("/", requireAdmin, upload.single("file"), async (req, res) => {
     res.status(201).json({ url: result.secure_url, resourceType });
   } catch (err) {
     console.error("Cloudinary upload failed:", err.message);
-    res.status(500).json({ error: "Upload failed" });
+
+    const isAuthError =
+      err.http_code === 401 ||
+      /invalid api key|unknown api key|api secret/i.test(err.message || "");
+
+    const message = isAuthError
+      ? "Cloudinary credentials are invalid. Check CLOUDINARY_CLOUD_NAME, CLOUDINARY_API_KEY, and CLOUDINARY_API_SECRET in server/.env."
+      : err.message || "Upload failed";
+
+    res.status(500).json({ error: message });
   }
 });
 
