@@ -7,14 +7,14 @@ const router = Router();
 
 const upload = multer({
   storage: multer.memoryStorage(),
-  limits: { fileSize: 100 * 1024 * 1024 }, // 100MB — covers a short intro video
+  limits: { fileSize: 10 * 1024 * 1024 }, // 10MB for images
 });
 
 function handleMulterUpload(req, res, next) {
   upload.single("file")(req, res, (err) => {
     if (!err) return next();
     if (err.code === "LIMIT_FILE_SIZE") {
-      return res.status(413).json({ error: "File too large (max 100MB)" });
+      return res.status(413).json({ error: "File too large (max 10MB)" });
     }
     return res.status(400).json({ error: err.message || "Invalid file upload" });
   });
@@ -25,12 +25,14 @@ router.post("/", requireAdmin, handleMulterUpload, async (req, res) => {
     return res.status(400).json({ error: "No file provided" });
   }
 
-  const resourceType = req.file.mimetype.startsWith("video") ? "video" : "image";
+  if (!req.file.mimetype.startsWith("image/")) {
+    return res.status(400).json({ error: "Only image uploads are supported" });
+  }
 
   const uploadFromBuffer = () =>
     new Promise((resolve, reject) => {
       const stream = cloudinary.uploader.upload_stream(
-        { resource_type: resourceType, folder: "oluferanmi-sec-portfolio" },
+        { resource_type: "image", folder: "oluferanmi-sec-portfolio" },
         (error, result) => (error ? reject(error) : resolve(result))
       );
       stream.end(req.file.buffer);
@@ -38,7 +40,7 @@ router.post("/", requireAdmin, handleMulterUpload, async (req, res) => {
 
   try {
     const result = await uploadFromBuffer();
-    res.status(201).json({ url: result.secure_url, resourceType });
+    res.status(201).json({ url: result.secure_url, resourceType: "image" });
   } catch (err) {
     console.error("Cloudinary upload failed:", err.message);
 

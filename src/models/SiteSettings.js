@@ -3,7 +3,6 @@ import mongoose from "mongoose";
 const siteSettingsSchema = new mongoose.Schema(
   {
     heroImageUrl: { type: String, default: "" },
-    heroVideoUrl: { type: String, default: "" },
   },
   { timestamps: true }
 );

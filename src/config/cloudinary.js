@@ -6,7 +6,7 @@ const { CLOUDINARY_CLOUD_NAME, CLOUDINARY_API_KEY, CLOUDINARY_API_SECRET } =
 export function validateCloudinaryConfig() {
   if (!CLOUDINARY_CLOUD_NAME || !CLOUDINARY_API_KEY || !CLOUDINARY_API_SECRET) {
     console.warn(
-      "Cloudinary credentials missing — image/video uploads will fail until .env is configured."
+      "Cloudinary credentials missing — image uploads will fail until .env is configured."
     );
     return false;
   }
