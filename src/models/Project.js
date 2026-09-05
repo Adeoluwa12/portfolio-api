@@ -9,6 +9,8 @@ const projectSchema = new mongoose.Schema(
     liveUrl: { type: String, default: "" },
     repoUrl: { type: String, default: "" },
     imageUrl: { type: String, default: "" },
+    metrics: [{ label: { type: String }, value: { type: String } }],
+    breakdown: { type: String, default: "" }, // markdown-style bullet breakdown
     featured: { type: Boolean, default: false },
     order: { type: Number, default: 0 },
     loggedAt: { type: Date, default: Date.now }, // "access log" timestamp shown on the site
