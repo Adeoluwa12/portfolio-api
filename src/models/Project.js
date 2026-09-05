@@ -9,7 +9,7 @@ const projectSchema = new mongoose.Schema(
     liveUrl: { type: String, default: "" },
     repoUrl: { type: String, default: "" },
     imageUrl: { type: String, default: "" },
-    metrics: [{ label: { type: String }, value: { type: String } }],
+    metrics: { type: String, default: "" },
     breakdown: { type: String, default: "" }, // markdown-style bullet breakdown
     featured: { type: Boolean, default: false },
     order: { type: Number, default: 0 },

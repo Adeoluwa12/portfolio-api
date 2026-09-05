@@ -11,6 +11,7 @@ import { validateCloudinaryConfig } from "./config/cloudinary.js";
 const app = express();
 validateCloudinaryConfig();
 
+app.set("trust proxy", 1); // required on Render (sits behind a reverse proxy)
 app.use(cors({ origin: process.env.CLIENT_ORIGIN, credentials: true }));
 app.use(express.json());
 
