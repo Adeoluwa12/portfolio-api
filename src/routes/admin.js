@@ -5,6 +5,8 @@ import Certification from "../models/Certification.js";
 import Skill from "../models/Skill.js";
 import Message from "../models/Message.js";
 import SiteSettings from "../models/SiteSettings.js";
+import BlogPost from "../models/BlogPost.js";
+import OpenSourceProject from "../models/OpenSourceProject.js";
 
 const router = Router();
 router.use(requireAdmin);
@@ -31,6 +33,8 @@ function crud(model, path) {
 crud(Project, "projects");
 crud(Certification, "certifications");
 crud(Skill, "skills");
+crud(BlogPost, "blog");
+crud(OpenSourceProject, "opensource");
 
 router.get("/settings", async (req, res) => {
   res.json(await SiteSettings.getSettings());

@@ -4,12 +4,13 @@ import Project from "../models/Project.js";
 import Certification from "../models/Certification.js";
 import Skill from "../models/Skill.js";
 import Message from "../models/Message.js";
-import SiteSettings from "../models/SiteSettings.js";   // ← add
+import SiteSettings from "../models/SiteSettings.js";
+import BlogPost from "../models/BlogPost.js";
+import OpenSourceProject from "../models/OpenSourceProject.js";
 import { sendContactNotification } from "../utils/mail.js";
 
 const router = Router();
 
-// ← add this whole block, right after `const router = Router();`
 router.get("/settings", async (req, res) => {
   const settings = await SiteSettings.getSettings();
   res.json(settings);
@@ -29,6 +30,24 @@ router.get("/certifications", async (req, res) => {
 router.get("/skills", async (req, res) => {
   const skills = await Skill.find().sort({ category: 1, order: 1 });
   res.json(skills);
+});
+
+// Blog — only published posts are public; sorted newest first
+router.get("/blog", async (req, res) => {
+  const posts = await BlogPost.find({ published: true }).sort({ publishedAt: -1, createdAt: -1 });
+  res.json(posts);
+});
+
+router.get("/blog/:slug", async (req, res) => {
+  const post = await BlogPost.findOne({ slug: req.params.slug, published: true });
+  if (!post) return res.status(404).json({ error: "Post not found" });
+  res.json(post);
+});
+
+// Open source projects — public, sorted by order then newest
+router.get("/opensource", async (req, res) => {
+  const items = await OpenSourceProject.find().sort({ order: 1, createdAt: -1 });
+  res.json(items);
 });
 
 const contactLimiter = rateLimit({
